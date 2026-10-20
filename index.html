@@ -564,34 +564,34 @@
             <div>
               <h3
                 class="bento-title"
-                data-i18n-uk="Хмарна синхронізація + миттєвий кеш"
-                data-i18n-en="Cloud sync + instant local cache"
-              >Хмарна синхронізація + миттєвий кеш</h3>
+                data-i18n-uk="MV3 Service Worker + Express & MongoDB API"
+                data-i18n-en="MV3 Service Worker + Express & MongoDB API"
+              >MV3 Service Worker + Express &amp; MongoDB API</h3>
               <p
                 class="bento-text"
-                data-i18n-uk="Шаблони синхронізуються з вашим обліковим записом через захищений REST API (JWT + автооновлення токенів) і дублюються в локальному сховищі браузера для миттєвого відкриття."
-                data-i18n-en="Prompts sync with your account via JWT-authenticated REST API and mirror to chrome.storage.local for zero-latency opening."
-              >Шаблони синхронізуються з вашим обліковим записом через захищений REST API (JWT + автооновлення токенів) і дублюються в локальному сховищі браузера для миттєвого відкриття.</p>
+                data-i18n-uk="Оскільки Service Worker у Manifest V3 вивантажується з пам'яті, токени, тема та кеш промптів зберігаються в chrome.storage.local, а фонова синхронізація з бекендом (Express + MongoDB) працює через асинхронний chrome.runtime.sendMessage."
+                data-i18n-en="Because MV3 Service Workers are event-driven, tokens, theme, and prompt cache persist in chrome.storage.local while syncing with the Express + MongoDB REST API via chrome.runtime.sendMessage."
+              >Оскільки Service Worker у Manifest V3 вивантажується з пам'яті, токени, тема та кеш промптів зберігаються в chrome.storage.local, а фонова синхронізація з бекендом (Express + MongoDB) працює через асинхронний chrome.runtime.sendMessage.</p>
             </div>
 
             <div class="step-code-preview mono">
-              TanStack Query → Background SW → chrome.storage.local
+              CSUI → chrome.runtime.sendMessage → SW ↔ Express + MongoDB
             </div>
           </div>
 
-          <!-- Card 3: Trusted Types & Quill Engine -->
+          <!-- Card 3: Shadow DOM vs Light DOM & Trusted Types -->
           <div class="bento-card bento-span-6">
             <div>
               <h3
                 class="bento-title"
-                data-i18n-uk="Сумісність із Trusted Types та Quill"
-                data-i18n-en="Trusted Types & Quill editor native sync"
-              >Сумісність із Trusted Types та Quill</h3>
+                data-i18n-uk="Shadow DOM (Plasmo CSUI) + Light DOM (Quill & Trusted Types)"
+                data-i18n-en="Shadow DOM (Plasmo CSUI) + Light DOM (Quill & Trusted Types)"
+              >Shadow DOM (Plasmo CSUI) + Light DOM (Quill &amp; Trusted Types)</h3>
               <p
                 class="bento-text"
-                data-i18n-uk="Сторінка gemini.google.com блокує звичайний innerHTML через політику Trusted Types. TemplaGem використовує DOM TreeWalker та нативні діапазони Range, не ламаючи внутрішній стан редактора."
-                data-i18n-en="gemini.google.com enforces strict Trusted Types CSP. TemplaGem uses DOM TreeWalker and native Range nodes to highlight variables without corrupting Quill state."
-              >Сторінка gemini.google.com блокує звичайний innerHTML через політику Trusted Types. TemplaGem використовує DOM TreeWalker та нативні діапазони Range, не ламаючи внутрішній стан редактора.</p>
+                data-i18n-uk="Інтерфейс оверлею герметично ізольований у Shadow DOM від стилів Gemini. А для підсвічування бейджів у полі вводу (.ql-editor / rich-textarea в Light DOM) TemplateHighlighter поєднує TreeWalker, Range API (сумісні з Trusted Types) та inline-атрибути під Parchment Blots редактора Quill."
+                data-i18n-en="The overlay UI is hermetically isolated inside Shadow DOM. To style variable badges inside Gemini's Light DOM (.ql-editor / rich-textarea), TemplateHighlighter uses Trusted-Types-safe TreeWalker & Range APIs plus inline attributes recognized by Quill's Parchment Blots."
+              >Інтерфейс оверлею герметично ізольований у Shadow DOM від стилів Gemini. А для підсвічування бейджів у полі вводу (.ql-editor / rich-textarea в Light DOM) TemplateHighlighter поєднує TreeWalker, Range API (сумісні з Trusted Types) та inline-атрибути під Parchment Blots редактора Quill.</p>
             </div>
           </div>
 
@@ -606,20 +606,20 @@
             </div>
             <ul class="spec-list">
               <li class="spec-item">
-                <div class="spec-item-label">Framework</div>
-                <div class="spec-item-value">Plasmo MV3 + React 18</div>
+                <div class="spec-item-label">Extension UI &amp; CSUI</div>
+                <div class="spec-item-value">Plasmo MV3 · React 18 · SCSS</div>
               </li>
               <li class="spec-item">
                 <div class="spec-item-label">State &amp; Validation</div>
-                <div class="spec-item-value">TanStack Query v5 + Zod v4</div>
+                <div class="spec-item-value">TanStack Query v5 · Zod v4</div>
               </li>
               <li class="spec-item">
-                <div class="spec-item-label">Theme Engine</div>
-                <div class="spec-item-value">Auto / Light / Dark Sync</div>
+                <div class="spec-item-label">Backend &amp; Storage</div>
+                <div class="spec-item-value">Express · MongoDB · chrome.storage</div>
               </li>
               <li class="spec-item">
                 <div class="spec-item-label">Quality Assurance</div>
-                <div class="spec-item-value">Vitest (&gt;85% cov) + Playwright</div>
+                <div class="spec-item-value">Vitest (&gt;85% cov) · Playwright E2E</div>
               </li>
             </ul>
           </div>
