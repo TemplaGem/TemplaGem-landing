@@ -1,0 +1,13 @@
+{
+  "name": "templagem-landing",
+  "version": "1.0.0",
+  "description": "Interactive landing page for TemplaGem — prompt template manager for Google Gemini",
+  "private": true,
+  "scripts": {
+    "start": "serve -s . -l 4173",
+    "dev": "serve -s . -l 4173"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
