@@ -1612,6 +1612,10 @@ kbd {
    Responsive Breakpoints & Touch Ergonomics
    ========================================================================== */
 
+/* ==========================================================================
+   Responsive Breakpoints & Touch Ergonomics
+   ========================================================================== */
+
 @media (max-width: 1024px) {
   .nav-links {
     display: none;
@@ -1621,7 +1625,7 @@ kbd {
   }
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 32px;
   }
   .hero-title {
     max-width: 24ch;
@@ -1629,6 +1633,7 @@ kbd {
   .pipeline-grid,
   .install-steps {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   .bento-span-7,
   .bento-span-5,
@@ -1637,47 +1642,303 @@ kbd {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
   .site-header {
     top: 8px;
-    padding: 0 10px;
+    padding: 0 8px;
+    margin-bottom: 8px;
   }
   .nav-inner {
     height: 52px;
     padding: 0 12px;
+    gap: 8px;
   }
   .brand-version {
     display: none;
   }
+  .brand-link {
+    font-size: 0.95rem;
+    gap: 6px;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .nav-controls {
+    gap: 6px;
+  }
+  .segmented-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+  .control-pill {
+    height: 32px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+  }
+  .mobile-nav-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  .mobile-nav-drawer {
+    top: 68px;
+    left: 8px;
+    right: 8px;
+    padding: 12px;
+    gap: 8px;
+  }
   .hero-section {
-    padding: 24px 0 40px;
+    padding: 16px 0 36px;
+  }
+  .status-pill {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    margin-bottom: 14px;
+    max-width: 100%;
+    line-height: 1.35;
   }
   .hero-title {
-    font-size: 2rem;
+    font-size: clamp(1.85rem, 7vw, 2.35rem);
+    line-height: 1.12;
+    margin-bottom: 14px;
+    max-width: 100%;
+  }
+  .hero-description {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    height: 44px;
+  }
+  .macos-window-frame {
+    border-radius: 16px;
+  }
+  .macos-titlebar {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .macos-url-pill {
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    max-width: 150px;
+  }
+  .macos-status-pill {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+  .sandbox-topbar {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .sandbox-tabs {
+    width: 100%;
+    display: flex;
+  }
+  .sandbox-tab {
+    flex: 1;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+  .sandbox-hint {
+    justify-content: center;
   }
   .sandbox-body {
     min-height: unset;
     height: auto;
-    padding: 14px;
+    padding: 12px;
+  }
+  .popover-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .popover-search-wrap {
+    max-width: 100%;
+  }
+  .popover-search {
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  .popover-tags {
+    padding: 6px 10px;
+  }
+  .popover-list {
+    max-height: 200px;
+  }
+  .popover-item {
+    padding: 8px;
   }
   .popover-item-preview {
-    max-width: 180px;
+    max-width: 160px;
+  }
+  .gemini-input-card {
+    padding: 10px;
+    border-radius: 16px;
+  }
+  .gemini-editor {
+    min-height: 54px;
+    font-size: 0.85rem;
+  }
+  .gemini-input-Readout {
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+  .gemini-Readout-actions {
+    gap: 6px;
+  }
+  .chip-action {
+    height: 32px;
+    padding: 0 8px;
+    font-size: 0.72rem;
+  }
+  .sim-shortcut-toolbar {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .sim-shortcut-badges {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sim-shortcut-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+  .popup-sim-frame {
+    max-width: 100%;
+  }
+  .popup-sim-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .popup-card-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .popup-card-item .popup-use-btn {
+    width: 100%;
+    text-align: center;
   }
   .page-section {
-    padding: 48px 0;
+    padding: 40px 0;
+  }
+  .section-header {
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+  .section-subtitle {
+    font-size: 0.9rem;
+  }
+  .pipeline-step {
+    padding: 18px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+  .bento-card {
+    padding: 20px;
+    border-radius: 18px;
+    gap: 16px;
+  }
+  .bento-title {
+    font-size: 1.15rem;
+  }
+  .bento-text {
+    font-size: 0.88rem;
+  }
+  .icon-showcase-grid {
+    gap: 6px;
+  }
+  .icon-pill-demo {
+    padding: 5px 8px;
+    font-size: 0.75rem;
   }
   .spec-list {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .spec-item {
+    padding: 10px 12px;
   }
   .install-box {
-    padding: 20px 16px;
+    padding: 18px 14px;
+    border-radius: 18px;
   }
-  /* Touch target floor >= 44px for primary interactive elements */
-  .chip-action,
-  .segmented-btn,
-  .control-pill,
-  .tag-chip,
-  .copy-btn {
-    min-height: 38px;
+  .install-tabs {
+    flex-direction: column;
+    width: 100%;
+    border-radius: 14px;
+    padding: 3px;
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+  .install-tab {
+    width: 100%;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  .install-card {
+    padding: 16px;
+  }
+  .code-copy-bar {
+    font-size: 0.75rem;
+    padding: 8px 10px;
+  }
+  .site-footer {
+    padding: 32px 0;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .macos-titlebar .macos-url-pill {
+    display: none;
+  }
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  .gemini-Readout-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .gemini-input-Readout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .gemini-send-btn {
+    align-self: flex-end;
   }
 }
