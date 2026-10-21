@@ -40,6 +40,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
   const [sentMessage, setSentMessage] = useState<string | null>(null);
   const [easterEggClicks, setEasterEggClicks] = useState<number>(0);
   const [easterEggRevealed, setEasterEggRevealed] = useState<boolean>(false);
+  const [activeKeyBadge, setActiveKeyBadge] = useState<string | null>(null);
 
   const editorRef = useRef<HTMLDivElement | null>(null);
   const activeVarIndexRef = useRef<number>(0);
@@ -196,11 +197,15 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
 
     if (e.key === "Tab" && pills.length > 0) {
       e.preventDefault();
+      setActiveKeyBadge("Tab");
+      setTimeout(() => setActiveKeyBadge(null), 350);
       jumpToNextPill();
       return;
     }
 
     if (e.key === "Enter" && !e.shiftKey) {
+      setActiveKeyBadge("Enter");
+      setTimeout(() => setActiveKeyBadge(null), 350);
       if (popoverOpen && pills.length === 0) {
         e.preventDefault();
         const target = overlayItems[selectedIndex] || overlayItems[0];
@@ -215,6 +220,8 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
     }
 
     if (e.key === "Escape" && popoverOpen) {
+      setActiveKeyBadge("Escape");
+      setTimeout(() => setActiveKeyBadge(null), 350);
       setPopoverOpen(false);
       return;
     }
@@ -285,10 +292,40 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
 
   return (
     <div
-      className="sandbox-stage"
+      className="macos-window-frame"
       role="region"
       aria-label="Interactive TemplaGem Simulator"
     >
+      {/* macOS Safari Window Chrome */}
+      <div className="macos-titlebar">
+        <div className="macos-dots" aria-hidden="true">
+          <span className="macos-dot macos-dot-red" />
+          <span className="macos-dot macos-dot-yellow" />
+          <span className="macos-dot macos-dot-green" />
+        </div>
+
+        <div className="macos-url-pill">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            aria-hidden="true"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>gemini.google.com/app</span>
+        </div>
+
+        <div className="macos-status-pill">
+          <span className="macos-status-dot" aria-hidden="true" />
+          <span>TemplaGem Active</span>
+        </div>
+      </div>
+
       <div className="sandbox-topbar">
         <div className="sandbox-tabs" role="tablist">
           <button
@@ -560,6 +597,42 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
             </button>
           </div>
         </div>
+
+        {/* Reactive Keyboard Shortcuts Bar */}
+        <div
+          className="sim-shortcut-toolbar"
+          aria-label="Interactive keyboard controls"
+        >
+          <span className="sim-shortcut-label">
+            {isEn ? "Quick shortcuts:" : "Швидке керування:"}
+          </span>
+          <div className="sim-shortcut-badges">
+            <div
+              className={`sim-shortcut-badge ${
+                activeKeyBadge === "Tab" ? "badge-active" : ""
+              }`}
+            >
+              <kbd>Tab</kbd>
+              <span>{isEn ? "next {{variable}}" : "наступна {{змінна}}"}</span>
+            </div>
+            <div
+              className={`sim-shortcut-badge ${
+                activeKeyBadge === "Enter" ? "badge-active" : ""
+              }`}
+            >
+              <kbd>Enter</kbd>
+              <span>{isEn ? "send clean" : "відправка без дужок"}</span>
+            </div>
+            <div
+              className={`sim-shortcut-badge ${
+                activeKeyBadge === "Escape" ? "badge-active" : ""
+              }`}
+            >
+              <kbd>Esc</kbd>
+              <span>{isEn ? "toggle overlay" : "сховати оверлей"}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* View 2: Simulated 400px Extension Popup */}
@@ -745,7 +818,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                         fontWeight: 700
                       }}
                     >
-                      ● API Online (176.138.97.78:8443)
+                      ● Local Storage Synced (chrome.storage.local)
                     </span>
                   ) : (
                     `${easterEggClicks}/5`

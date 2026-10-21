@@ -14,17 +14,18 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ lang }) =>
         <div className="section-header">
           <h2 className="section-title">
             {isEn
-              ? "From template to clean prompt in three steps"
-              : "Від шаблону до готового запиту за три дії"}
+              ? "From template to clean prompt in three fluid steps"
+              : "Від шаблону до готового запиту за три точні дії"}
           </h2>
           <p className="section-subtitle">
             {isEn
-              ? "TemplaGem hooks directly into the Quill editor on gemini.google.com and handles variable highlighting and cleanup automatically."
-              : "TemplaGem вбудовується безпосередньо в Quill-редактор сторінки gemini.google.com і бере на себе всю рутину з форматуванням."}
+              ? "TemplaGem hooks directly into the Gemini input editor, handling instant popover docking, variable pills, and bracket cleanup automatically."
+              : "TemplaGem вбудовується безпосередньо в редактор сторінки gemini.google.com і бере на себе всю рутину з навігацією та форматуванням."}
           </p>
         </div>
 
         <div className="pipeline-grid">
+          {/* Step 1: Focus */}
           <article className="pipeline-step">
             <div>
               <div className="step-header">
@@ -42,15 +43,20 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ lang }) =>
                   : "Щойно ви ставите курсор у поле чату Gemini, над ним з'являється легке вікно зі списком ваших шаблонів, пошуком та фільтрацією за тегами."}
               </p>
             </div>
-            <div className="step-code-preview mono">
-              #навчання &nbsp; #код &nbsp; #email
-              <br />
-              ▸ Конспект матеріалу
-              <br />
-              &nbsp;&nbsp;Code Review &amp; Refactor
+            <div className="step-code-preview mono" style={{ borderRadius: "14px" }}>
+              <div style={{ color: "var(--accent-blue)", fontSize: "0.75rem", marginBottom: "4px" }}>
+                #навчання &nbsp; #код &nbsp; #email
+              </div>
+              <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                ▸ Конспект матеріалу
+              </div>
+              <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>
+                &nbsp;&nbsp;Code Review &amp; Refactor
+              </div>
             </div>
           </article>
 
+          {/* Step 2: Fill */}
           <article className="pipeline-step">
             <div>
               <div className="step-header">
@@ -68,16 +74,17 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ lang }) =>
                   : "Кожен параметр у подвійних фігурних дужках перетворюється на інтерактивний токен. Почніть друкувати, щоб замінити значення, і натискайте Tab для переходу далі."}
               </p>
             </div>
-            <div className="step-code-preview">
-              Зроби конспект за темою:{" "}
+            <div className="step-code-preview" style={{ borderRadius: "14px", lineHeight: "1.8" }}>
+              <span>Зроби конспект: </span>
               <span className="ph-template-variable ph-template-variable-active">
-                {"{{тема}}"}
+                <span style={{ fontSize: "0.7em", opacity: 0.8 }}>⇥</span> {"{{тема}}"}
               </span>{" "}
-              для рівня{" "}
+              <span>для </span>
               <span className="ph-template-variable">{"{{рівень}}"}</span>
             </div>
           </article>
 
+          {/* Step 3: Send */}
           <article className="pipeline-step">
             <div>
               <div className="step-header">
@@ -95,7 +102,7 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ lang }) =>
                   : "Навіть якщо ви залишили якусь змінну за замовчуванням, під час натискання Enter або кнопки відправки розширення прибере службові дужки {{ }}."}
               </p>
             </div>
-            <div className="step-code-preview mono">
+            <div className="step-code-preview mono" style={{ borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span
                 style={{
                   color: "var(--text-muted)",
@@ -103,8 +110,11 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ lang }) =>
                 }}
               >
                 {"{{TypeScript}}"}
-              </span>{" "}
-              → <span style={{ color: "var(--icon-green-fg)" }}>TypeScript</span>
+              </span>
+              <span style={{ color: "var(--accent-blue)", fontWeight: 600 }}>→</span>
+              <span style={{ color: "var(--icon-green-fg)", fontWeight: 600 }}>
+                TypeScript ✓
+              </span>
             </div>
           </article>
         </div>
