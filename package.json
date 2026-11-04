@@ -8,7 +8,9 @@
     "dev": "vite --port 4173",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "cf:dev": "npm run build && wrangler pages dev dist"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -19,6 +21,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.3.3",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "wrangler": "^4.157.0"
   }
 }
