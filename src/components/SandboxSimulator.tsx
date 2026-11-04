@@ -1,11 +1,51 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { INITIAL_PROMPTS, localizePrompt } from "../data/prompts";
-import type { Language, PromptItem, SandboxTab, SortOption } from "../types";
-import { PromptIcon, TemplaGemMark } from "./Icons";
+import { INITIAL_PROMPTS } from "../data/prompts";
+import type { PromptItem, SandboxTab, SortOption } from "../types";
+import {
+  ChatGPTMark,
+  ClaudeMark,
+  DeepSeekMark,
+  GeminiMark,
+  PromptIcon,
+  TemplaGemMark
+} from "./Icons";
 
-interface SandboxSimulatorProps {
-  lang: Language;
-}
+export type SimulatedPlatform = "gemini" | "chatgpt" | "claude" | "deepseek";
+
+const PLATFORM_CONFIG: Record<
+  SimulatedPlatform,
+  {
+    name: string;
+    url: string;
+    color: string;
+    placeholder: string;
+  }
+> = {
+  gemini: {
+    name: "Google Gemini",
+    url: "gemini.google.com/app",
+    color: "#0b57d0",
+    placeholder: "Ask Gemini or pick a template above..."
+  },
+  chatgpt: {
+    name: "ChatGPT",
+    url: "chatgpt.com",
+    color: "#10a37f",
+    placeholder: "Message ChatGPT or pick a template..."
+  },
+  claude: {
+    name: "Claude",
+    url: "claude.ai/new",
+    color: "#d97757",
+    placeholder: "How can Claude help you today? Pick a template..."
+  },
+  deepseek: {
+    name: "DeepSeek",
+    url: "chat.deepseek.com",
+    color: "#4d6bfe",
+    placeholder: "Ask DeepSeek anything or pick a template..."
+  }
+};
 
 function escapeHtml(str: string): string {
   return String(str)
@@ -19,9 +59,51 @@ function stripBrackets(text: string): string {
   return text.replace(/\{\{([^{}\n]+)\}\}/g, "$1");
 }
 
-export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
-  const isEn = lang === "en";
+function filterAndSortPrompts(
+  prompts: PromptItem[],
+  query: string,
+  tag: string,
+  sort: SortOption
+): PromptItem[] {
+  const q = query.trim().toLowerCase();
+  const filtered = prompts.filter((item) => {
+    const matchesTag = !tag || tag === "all" || item.tags.includes(tag);
+    const matchesQuery =
+      !q ||
+      item.title.toLowerCase().includes(q) ||
+      item.text.toLowerCase().includes(q) ||
+      item.tags.some((t) => t.toLowerCase().includes(q));
+    return matchesTag && matchesQuery;
+  });
 
+  const sorted = [...filtered];
+  sorted.sort((a, b) => {
+    switch (sort) {
+      case "created-asc":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "title-asc":
+        return a.title.localeCompare(b.title);
+      case "title-desc":
+        return b.title.localeCompare(a.title);
+      case "updated-desc":
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      case "created-desc":
+      default:
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    }
+  });
+
+  return sorted;
+}
+
+export const SandboxSimulator: React.FC = React.memo(() => {
+  const [platform, setPlatform] = useState<SimulatedPlatform>("gemini");
   const [sandboxMode, setSandboxMode] = useState<SandboxTab>("overlay");
   const [popoverOpen, setPopoverOpen] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -29,6 +111,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const [popupQuery, setPopupQuery] = useState<string>("");
+  const [popupTag, setPopupTag] = useState<string>("all");
   const [sortOption, setSortOption] = useState<SortOption>("created-desc");
   const [prompts, setPrompts] = useState<PromptItem[]>(INITIAL_PROMPTS);
 
@@ -44,232 +127,164 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
 
   const editorRef = useRef<HTMLDivElement | null>(null);
   const activeVarIndexRef = useRef<number>(0);
+  const keyBadgeTimerRef = useRef<number | null>(null);
 
-  const localizedPrompts = useMemo(
-    () => prompts.map((p) => localizePrompt(p, lang)),
-    [prompts, lang]
-  );
+  useEffect(() => {
+    return () => {
+      if (keyBadgeTimerRef.current !== null) {
+        window.clearTimeout(keyBadgeTimerRef.current);
+      }
+    };
+  }, []);
 
   const availableTags = useMemo(() => {
     const tagSet = new Set<string>();
-    localizedPrompts.forEach((p) => {
-      p.displayTags.forEach((t) => tagSet.add(t));
+    prompts.forEach((p) => {
+      p.tags.forEach((t) => tagSet.add(t));
     });
     return ["all", ...Array.from(tagSet)];
-  }, [localizedPrompts]);
+  }, [prompts]);
 
-  const filterAndSort = (query: string, tag: string, sort: SortOption) => {
-    const q = query.trim().toLowerCase();
-    const filtered = localizedPrompts.filter((item) => {
-      const matchesTag =
-        !tag || tag === "all" || item.displayTags.includes(tag);
-      const matchesQuery =
-        !q ||
-        item.displayTitle.toLowerCase().includes(q) ||
-        item.displayText.toLowerCase().includes(q) ||
-        item.displayTags.some((t) => t.toLowerCase().includes(q));
-      return matchesTag && matchesQuery;
-    });
-
-    const sorted = [...filtered];
-    sorted.sort((a, b) => {
-      switch (sort) {
-        case "created-asc":
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        case "title-asc":
-          return a.displayTitle.localeCompare(b.displayTitle);
-        case "title-desc":
-          return b.displayTitle.localeCompare(a.displayTitle);
-        case "updated-desc":
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
-        case "created-desc":
-        default:
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-      }
-    });
-    return sorted;
-  };
-
-  const overlayItems = useMemo(
-    () => filterAndSort(searchQuery, activeTag, "created-desc"),
-    [localizedPrompts, searchQuery, activeTag]
+  const overlayList = useMemo(
+    () => filterAndSortPrompts(prompts, searchQuery, activeTag, "created-desc"),
+    [prompts, searchQuery, activeTag]
   );
 
-  const popupItems = useMemo(
-    () => filterAndSort(popupQuery, "all", sortOption),
-    [localizedPrompts, popupQuery, sortOption]
+  const popupList = useMemo(
+    () => filterAndSortPrompts(prompts, popupQuery, popupTag, sortOption),
+    [prompts, popupQuery, popupTag, sortOption]
   );
 
-  const setActiveVariablePill = (index: number) => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const pills = Array.from(
-      editor.querySelectorAll<HTMLElement>(".ph-template-variable")
-    );
-    if (pills.length === 0) return;
-    const normalized = ((index % pills.length) + pills.length) % pills.length;
-    activeVarIndexRef.current = normalized;
-    pills.forEach((p, idx) => {
-      p.classList.toggle("ph-template-variable-active", idx === normalized);
-    });
+  const showKeyFeedback = (label: string) => {
+    if (keyBadgeTimerRef.current !== null) {
+      window.clearTimeout(keyBadgeTimerRef.current);
+    }
+    setActiveKeyBadge(label);
+    keyBadgeTimerRef.current = window.setTimeout(() => {
+      setActiveKeyBadge((curr) => (curr === label ? null : curr));
+      keyBadgeTimerRef.current = null;
+    }, 700);
   };
 
-  const bindVariablePillEvents = () => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const pills = editor.querySelectorAll<HTMLElement>(".ph-template-variable");
-    pills.forEach((pill, index) => {
-      pill.onclick = (e) => {
-        e.stopPropagation();
-        setActiveVariablePill(index);
-        editor.focus();
-      };
-    });
-  };
-
-  const insertTemplateIntoGemini = (
-    templateText: string,
-    closePopover = true
+  const selectVariablePill = (
+    pills: NodeListOf<HTMLSpanElement>,
+    index: number
   ) => {
+    if (pills.length === 0) return;
+    const clamped = (index + pills.length) % pills.length;
+    activeVarIndexRef.current = clamped;
+
+    pills.forEach((p, i) => {
+      if (i === clamped) {
+        p.classList.add("ph-template-variable-active");
+        p.focus();
+        try {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(p);
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        } catch {
+          // Fallback if selection isn't supported in environment
+        }
+      } else {
+        p.classList.remove("ph-template-variable-active");
+      }
+    });
+  };
+
+  const insertTemplateIntoEditor = (rawText: string, closeOverlay = true) => {
     const editor = editorRef.current;
     if (!editor) return;
 
-    const escaped = escapeHtml(templateText);
-    let varIdx = 0;
-    const htmlWithPills = escaped.replace(
-      /\{\{([^{}\n]+)\}\}/g,
-      (_match, varName: string) => {
-        const activeClass = varIdx === 0 ? "ph-template-variable-active" : "";
-        const span = `<span class="ph-template-variable ${activeClass}" contenteditable="false" data-var-index="${varIdx}" data-var-name="${varName}">{{${varName}}}</span>`;
-        varIdx++;
-        return span;
-      }
-    );
+    // Convert {{variable}} to interactive spans
+    const tokenRegex = /\{\{([^{}\n]+)\}\}/g;
+    let resultHtml = "";
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
 
-    editor.innerHTML = htmlWithPills;
-    activeVarIndexRef.current = 0;
-    if (closePopover) {
+    while ((match = tokenRegex.exec(rawText)) !== null) {
+      const before = rawText.slice(lastIndex, match.index);
+      resultHtml += escapeHtml(before);
+      const varName = match[1];
+      resultHtml += `<span class="ph-template-variable" contenteditable="true" role="textbox" data-default="${escapeHtml(
+        varName
+      )}">{{${escapeHtml(varName)}}}</span>`;
+      lastIndex = tokenRegex.lastIndex;
+    }
+    resultHtml += escapeHtml(rawText.slice(lastIndex));
+
+    editor.innerHTML = resultHtml.replace(/\n/g, "<br>");
+    if (closeOverlay) {
       setPopoverOpen(false);
     }
-    bindVariablePillEvents();
-  };
 
-  useEffect(() => {
-    setActiveTag("all");
-    const first = localizePrompt(INITIAL_PROMPTS[0], lang);
-    insertTemplateIntoGemini(first.displayText, false);
-    setPopoverOpen(true);
-  }, [lang]);
-
-  const jumpToNextPill = () => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const pills = editor.querySelectorAll(".ph-template-variable");
-    if (pills.length === 0) return;
-    setActiveVariablePill(activeVarIndexRef.current + 1);
-    editor.focus();
-  };
-
-  const handleSendSimulatedMessage = () => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const rawText = editor.innerText.trim();
-    if (!rawText) return;
-
-    const cleanText = stripBrackets(rawText);
-    setSentMessage(cleanText);
-    editor.innerHTML = "";
-    setPopoverOpen(true);
+    // Auto-focus first variable
+    setTimeout(() => {
+      const pills = editor.querySelectorAll<HTMLSpanElement>(
+        ".ph-template-variable"
+      );
+      if (pills.length > 0) {
+        selectVariablePill(pills, 0);
+      } else {
+        editor.focus();
+      }
+    }, 20);
   };
 
   const handleEditorKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const editor = editorRef.current;
     if (!editor) return;
 
-    const pills = Array.from(editor.querySelectorAll(".ph-template-variable"));
-    const activePill = editor.querySelector(".ph-template-variable-active");
-
-    if (e.key === "Tab" && pills.length > 0) {
-      e.preventDefault();
-      setActiveKeyBadge("Tab");
-      setTimeout(() => setActiveKeyBadge(null), 350);
-      jumpToNextPill();
-      return;
+    if (e.key === "Tab") {
+      const pills = editor.querySelectorAll<HTMLSpanElement>(
+        ".ph-template-variable"
+      );
+      if (pills.length > 0) {
+        e.preventDefault();
+        const nextIndex = e.shiftKey
+          ? activeVarIndexRef.current - 1
+          : activeVarIndexRef.current + 1;
+        selectVariablePill(pills, nextIndex);
+        showKeyFeedback(e.shiftKey ? "Shift + Tab" : "Tab ⇥");
+        return;
+      }
     }
 
     if (e.key === "Enter" && !e.shiftKey) {
-      setActiveKeyBadge("Enter");
-      setTimeout(() => setActiveKeyBadge(null), 350);
-      if (popoverOpen && pills.length === 0) {
-        e.preventDefault();
-        const target = overlayItems[selectedIndex] || overlayItems[0];
-        if (target) {
-          insertTemplateIntoGemini(target.displayText, true);
-        }
-        return;
-      }
       e.preventDefault();
-      handleSendSimulatedMessage();
+      const raw = editor.innerText || "";
+      const cleaned = stripBrackets(raw).trim();
+      if (!cleaned) return;
+
+      setSentMessage(cleaned);
+      editor.innerHTML = "";
+      showKeyFeedback("Enter ⏎ (Sent)");
       return;
     }
 
-    if (e.key === "Escape" && popoverOpen) {
-      setActiveKeyBadge("Escape");
-      setTimeout(() => setActiveKeyBadge(null), 350);
+    if (e.key === "Escape") {
       setPopoverOpen(false);
-      return;
-    }
-
-    if (
-      activePill &&
-      e.key.length === 1 &&
-      !e.ctrlKey &&
-      !e.metaKey &&
-      !e.altKey
-    ) {
-      e.preventDefault();
-      const textNode = document.createTextNode(e.key);
-      activePill.replaceWith(textNode);
-
-      const sel = window.getSelection();
-      if (sel) {
-        const range = document.createRange();
-        range.setStartAfter(textNode);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
-
-      const remaining = editor.querySelectorAll(".ph-template-variable");
-      if (remaining.length > 0) {
-        setActiveVariablePill(0);
-      }
+      showKeyFeedback("Esc");
     }
   };
 
-  const handleCreatePrompt = (e: React.FormEvent) => {
+  const handleAddNewPrompt = (e: React.FormEvent) => {
     e.preventDefault();
-    const title = newTitle.trim();
-    const text = newText.trim();
-    const cleanTag = (newTag.trim() || "custom").replace(/^#/, "");
-    if (!title || !text) return;
+    if (!newTitle.trim() || !newText.trim()) return;
+
+    const tagsArray = newTag
+      .split(",")
+      .map((t) => t.trim().replace(/^#/, ""))
+      .filter(Boolean);
 
     const created: PromptItem = {
-      id: "p-custom-" + Date.now(),
-      title,
-      titleEn: title,
+      id: "custom-" + Date.now(),
+      title: newTitle.trim(),
       icon: "sparkles",
       color: "blue",
-      text,
-      textEn: text,
-      tags: [cleanTag],
-      tagsEn: [cleanTag],
+      text: newText.trim(),
+      tags: tagsArray.length > 0 ? tagsArray : ["custom"],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -279,14 +294,37 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
     setNewText("");
     setNewTag("");
     setShowAddForm(false);
+    showKeyFeedback("Saved");
   };
 
   const handleEasterEggClick = () => {
-    if (easterEggRevealed) return;
     const next = easterEggClicks + 1;
     setEasterEggClicks(next);
     if (next >= 5) {
       setEasterEggRevealed(true);
+    }
+  };
+
+  // Keyboard shortcut listener inside overlay search box
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        overlayList.length ? (prev + 1) % overlayList.length : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        overlayList.length
+          ? (prev - 1 + overlayList.length) % overlayList.length
+          : 0
+      );
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const picked = overlayList[selectedIndex];
+      if (picked) {
+        insertTemplateIntoEditor(picked.text, true);
+      }
     }
   };
 
@@ -295,6 +333,11 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
       className="macos-window-frame"
       role="region"
       aria-label="Interactive TemplaGem Simulator"
+      style={
+        {
+          "--platform-accent": PLATFORM_CONFIG[platform].color
+        } as React.CSSProperties
+      }
     >
       {/* macOS Safari Window Chrome */}
       <div className="macos-titlebar">
@@ -317,48 +360,115 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
-          <span>gemini.google.com/app</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <span
+              style={{
+                width: "7px",
+                height: "7px",
+                borderRadius: "50%",
+                backgroundColor: PLATFORM_CONFIG[platform].color
+              }}
+            />
+            {PLATFORM_CONFIG[platform].url}
+          </span>
         </div>
 
         <div className="macos-status-pill">
           <span className="macos-status-dot" aria-hidden="true" />
-          <span>TemplaGem Active</span>
+          <span>TemplaGem Ready</span>
         </div>
       </div>
 
+      {/* Unified Toolbar: Platform Selector + Mode Tabs */}
       <div className="sandbox-topbar">
+        <div
+          className="sim-platform-selector"
+          role="tablist"
+          aria-label="Select Target AI Platform"
+        >
+          <button
+            type="button"
+            className={`sim-platform-btn ${platform === "gemini" ? "active" : ""}`}
+            onClick={() => setPlatform("gemini")}
+            aria-selected={platform === "gemini"}
+            title="Google Gemini"
+          >
+            <span
+              className="sim-platform-dot"
+              style={{ backgroundColor: "#0b57d0" }}
+            />
+            <GeminiMark size={13} />
+            <span>Gemini</span>
+          </button>
+          <button
+            type="button"
+            className={`sim-platform-btn ${platform === "chatgpt" ? "active" : ""}`}
+            onClick={() => setPlatform("chatgpt")}
+            aria-selected={platform === "chatgpt"}
+            title="ChatGPT"
+          >
+            <span
+              className="sim-platform-dot"
+              style={{ backgroundColor: "#10a37f" }}
+            />
+            <ChatGPTMark size={13} />
+            <span>ChatGPT</span>
+          </button>
+          <button
+            type="button"
+            className={`sim-platform-btn ${platform === "claude" ? "active" : ""}`}
+            onClick={() => setPlatform("claude")}
+            aria-selected={platform === "claude"}
+            title="Anthropic Claude"
+          >
+            <span
+              className="sim-platform-dot"
+              style={{ backgroundColor: "#d97757" }}
+            />
+            <ClaudeMark size={13} />
+            <span>Claude</span>
+          </button>
+          <button
+            type="button"
+            className={`sim-platform-btn ${platform === "deepseek" ? "active" : ""}`}
+            onClick={() => setPlatform("deepseek")}
+            aria-selected={platform === "deepseek"}
+            title="DeepSeek"
+          >
+            <span
+              className="sim-platform-dot"
+              style={{ backgroundColor: "#4d6bfe" }}
+            />
+            <DeepSeekMark size={13} />
+            <span>DeepSeek</span>
+          </button>
+        </div>
+
         <div className="sandbox-tabs" role="tablist">
           <button
             type="button"
             id="tab-overlay"
-            className="sandbox-tab"
+            className={`sandbox-tab ${sandboxMode === "overlay" ? "active" : ""}`}
             role="tab"
             aria-selected={sandboxMode === "overlay"}
             onClick={() => setSandboxMode("overlay")}
           >
-            {isEn ? "1. Gemini Input Overlay" : "1. Поле вводу Gemini"}
+            Overlay
           </button>
           <button
             type="button"
             id="tab-popup"
-            className="sandbox-tab"
+            className={`sandbox-tab ${sandboxMode === "popup" ? "active" : ""}`}
             role="tab"
             aria-selected={sandboxMode === "popup"}
             onClick={() => setSandboxMode("popup")}
           >
-            {isEn ? "2. Extension Popup" : "2. Попап розширення"}
+            Popup
           </button>
-        </div>
-        <div className="sandbox-hint">
-          <span>
-            {isEn
-              ? "Live sandbox — click and type"
-              : "Живе демо — клікайте та друкуйте"}
-          </span>
         </div>
       </div>
 
-      {/* View 1: Simulated Gemini Page + Docked Overlay */}
+      {/* View 1: Simulated Chat Page + Docked Overlay */}
       <div
         id="sandbox-overlay-view"
         className="sandbox-body"
@@ -370,6 +480,11 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
             className={`gemini-popover-sim ${popoverOpen ? "" : "is-closed"}`}
             role="listbox"
             aria-label="TemplaGem Prompts"
+            style={
+              {
+                "--platform-accent": PLATFORM_CONFIG[platform].color
+              } as React.CSSProperties
+            }
           >
             <div className="popover-header">
               <div className="popover-brand">
@@ -399,53 +514,68 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                     setSearchQuery(e.target.value);
                     setSelectedIndex(0);
                   }}
-                  placeholder={
-                    isEn ? "Search templates..." : "Пошук промптів..."
-                  }
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder="Search templates..."
                   aria-label="Search templates"
                 />
               </div>
             </div>
 
-            <div id="sim-tags" className="popover-tags">
-              {availableTags.map((tag) => {
-                const isActive = activeTag === tag;
-                const label =
-                  tag === "all" ? (isEn ? "All" : "Усі") : `#${tag}`;
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`tag-chip ${isActive ? "active" : ""}`}
-                    onClick={() => {
-                      setActiveTag(tag);
-                      setSelectedIndex(0);
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+            <div className="popover-tags-bar">
+              <nav
+                id="sim-tags"
+                className="popover-tags"
+                aria-label="Filter templates by tag"
+                onWheel={(e) => {
+                  if (e.deltaY !== 0) {
+                    e.currentTarget.scrollLeft += e.deltaY;
+                  }
+                }}
+              >
+                {availableTags.map((t) => {
+                  const isSelected = activeTag === t;
+                  return (
+                    <button
+                      type="button"
+                      key={t}
+                      className={`tag-pill ${isSelected ? "active" : ""}`}
+                      aria-pressed={isSelected}
+                      onClick={() => {
+                        const nextTag = isSelected && t !== "all" ? "all" : t;
+                        setActiveTag(nextTag);
+                        setSelectedIndex(0);
+                      }}
+                    >
+                      {t === "all" ? "All" : `#${t}`}
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
 
-            <ul id="sim-prompt-list" className="popover-list">
-              {overlayItems.length === 0 ? (
-                <li
-                  style={{
-                    padding: "18px",
-                    textAlign: "center",
-                    color: "var(--text-muted)",
-                    fontSize: "0.8125rem"
-                  }}
-                >
-                  {isEn
-                    ? "No templates match your filter."
-                    : "Шаблонів за цим запитом не знайдено."}
+            <ul id="sim-list" className="popover-list">
+              {overlayList.length === 0 ? (
+                <li className="popover-empty">
+                  <span>No templates match your query</span>
+                  {(activeTag !== "all" || searchQuery) && (
+                    <button
+                      type="button"
+                      className="chip-action"
+                      style={{ marginTop: 8 }}
+                      onClick={() => {
+                        setActiveTag("all");
+                        setSearchQuery("");
+                        setSelectedIndex(0);
+                      }}
+                    >
+                      Reset filters
+                    </button>
+                  )}
                 </li>
               ) : (
-                overlayItems.map((item, idx) => {
+                overlayList.map((item, idx) => {
                   const isSelected = idx === selectedIndex;
-                  const preview = item.displayText.replace(/\n+/g, " ");
+                  const preview = item.text.replace(/\n+/g, " ");
                   return (
                     <li
                       key={item.id}
@@ -454,7 +584,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                       aria-selected={isSelected}
                       onClick={() => {
                         setSelectedIndex(idx);
-                        insertTemplateIntoGemini(item.displayText, true);
+                        insertTemplateIntoEditor(item.text, true);
                       }}
                     >
                       <div className="popover-item-left">
@@ -465,15 +595,23 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                           <PromptIcon icon={item.icon} />
                         </span>
                         <div style={{ minWidth: 0 }}>
-                          <div className="popover-item-title">
-                            {item.displayTitle}
-                          </div>
+                          <div className="popover-item-title">{item.title}</div>
                           <div className="popover-item-preview">{preview}</div>
                         </div>
                       </div>
                       <div className="popover-item-tags">
-                        {item.displayTags.slice(0, 2).map((t) => (
-                          <span key={t} className="mini-tag">
+                        {item.tags.map((t) => (
+                          <span
+                            key={t}
+                            className={`mini-tag ${activeTag === t ? "active" : ""}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const nextTag = activeTag === t ? "all" : t;
+                              setActiveTag(nextTag);
+                              setSelectedIndex(0);
+                            }}
+                            title={`Filter by #${t}`}
+                          >
                             #{t}
                           </span>
                         ))}
@@ -506,9 +644,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                   <span>
-                    {isEn
-                      ? "Sent to Gemini — {{brackets}} stripped automatically"
-                      : "Надіслано в Gemini — дужки {{...}} очищено автоматично"}
+                    Sent to {PLATFORM_CONFIG[platform].name} — {"{{brackets}}"} stripped automatically
                   </span>
                 </div>
               </>
@@ -516,7 +652,7 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
           </div>
         </div>
 
-        {/* Simulated Gemini Rich Input Box */}
+        {/* Simulated Rich Input Box */}
         <div className="gemini-input-card">
           <div
             ref={editorRef}
@@ -526,12 +662,8 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
             suppressContentEditableWarning
             role="textbox"
             aria-multiline="true"
-            aria-label="Simulated Gemini prompt input"
-            data-placeholder={
-              isEn
-                ? "Ask Gemini or pick a template above..."
-                : "Введіть запит для Gemini або оберіть шаблон вище..."
-            }
+            aria-label={`Simulated ${PLATFORM_CONFIG[platform].name} prompt input`}
+            data-placeholder={PLATFORM_CONFIG[platform].placeholder}
             onFocus={() => {
               const editor = editorRef.current;
               if (!editor) return;
@@ -551,284 +683,276 @@ export const SandboxSimulator: React.FC<SandboxSimulatorProps> = ({ lang }) => {
                 className="chip-action"
                 onClick={() => setPopoverOpen((prev) => !prev)}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"
-                    fill="#1a73e8"
-                  />
-                </svg>
-                <span>{isEn ? "Templates" : "Шаблони"}</span>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: PLATFORM_CONFIG[platform].color
+                  }}
+                >
+                  <TemplaGemMark size={13} />
+                </span>
+                <span>Templates</span>
               </button>
 
               <button
                 type="button"
-                id="btn-next-var"
+                id="btn-cycle-vars"
                 className="chip-action"
-                onClick={jumpToNextPill}
+                onClick={() => {
+                  const editor = editorRef.current;
+                  if (!editor) return;
+                  const pills = editor.querySelectorAll<HTMLSpanElement>(
+                    ".ph-template-variable"
+                  );
+                  if (pills.length > 0) {
+                    selectVariablePill(
+                      pills,
+                      activeVarIndexRef.current + 1
+                    );
+                    showKeyFeedback("Tab ⇥");
+                  }
+                }}
               >
-                <kbd>Tab</kbd>
-                <span>
-                  {isEn ? "Next {{variable}}" : "Наступна {{змінна}}"}
-                </span>
+                <kbd>Tab ⇥</kbd>
+                <span>Cycle Variables</span>
               </button>
             </div>
 
             <button
               type="button"
-              id="btn-send-prompt"
+              id="sim-send-btn"
               className="gemini-send-btn"
-              aria-label="Send prompt to Gemini"
-              title="Send (Enter)"
-              onClick={handleSendSimulatedMessage}
+              aria-label="Send prompt to AI"
+              onClick={() => {
+                const editor = editorRef.current;
+                if (!editor) return;
+                const raw = editor.innerText || "";
+                const cleaned = stripBrackets(raw).trim();
+                if (!cleaned) return;
+                setSentMessage(cleaned);
+                editor.innerHTML = "";
+                showKeyFeedback("Enter ⏎ (Sent)");
+              }}
             >
               <svg
                 width="16"
                 height="16"
                 viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                fill="currentColor"
               >
-                <line x1="12" y1="19" x2="12" y2="5" />
-                <polyline points="5 12 12 5 19 12" />
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </button>
           </div>
         </div>
-
-        {/* Reactive Keyboard Shortcuts Bar */}
-        <div
-          className="sim-shortcut-toolbar"
-          aria-label="Interactive keyboard controls"
-        >
-          <span className="sim-shortcut-label">
-            {isEn ? "Quick shortcuts:" : "Швидке керування:"}
-          </span>
-          <div className="sim-shortcut-badges">
-            <div
-              className={`sim-shortcut-badge ${
-                activeKeyBadge === "Tab" ? "badge-active" : ""
-              }`}
-            >
-              <kbd>Tab</kbd>
-              <span>{isEn ? "next {{variable}}" : "наступна {{змінна}}"}</span>
-            </div>
-            <div
-              className={`sim-shortcut-badge ${
-                activeKeyBadge === "Enter" ? "badge-active" : ""
-              }`}
-            >
-              <kbd>Enter</kbd>
-              <span>{isEn ? "send clean" : "відправка без дужок"}</span>
-            </div>
-            <div
-              className={`sim-shortcut-badge ${
-                activeKeyBadge === "Escape" ? "badge-active" : ""
-              }`}
-            >
-              <kbd>Esc</kbd>
-              <span>{isEn ? "toggle overlay" : "сховати оверлей"}</span>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* View 2: Simulated 400px Extension Popup */}
+      {/* View 2: Simulated Popup View */}
       <div
         id="sandbox-popup-view"
         className="sandbox-body"
-        style={{ display: sandboxMode === "popup" ? "block" : "none" }}
+        style={{ display: sandboxMode === "popup" ? "flex" : "none" }}
       >
-        <div className="popup-sim-wrapper">
-          <div className="popup-sim-frame">
-            <div className="popup-sim-header">
-              <div className="popover-brand">
-                <TemplaGemMark size={18} />
-                <span>TemplaGem Popup</span>
-              </div>
-
-              <button
-                type="button"
-                id="btn-toggle-add-form"
-                className="popup-use-btn"
-                onClick={() => setShowAddForm((prev) => !prev)}
-              >
-                {isEn ? "+ New Prompt" : "+ Новий шаблон"}
-              </button>
+        <div className="sim-popup-container">
+          <div className="sim-popup-header">
+            <div
+              className="sim-popup-title"
+              onClick={handleEasterEggClick}
+              title="TemplaGem Popup"
+              style={{ cursor: "pointer" }}
+            >
+              <TemplaGemMark size={18} />
+              <span>TemplaGem Library</span>
             </div>
 
-            <div className="popup-sim-body">
-              {showAddForm && (
-                <form
-                  id="popup-add-form"
-                  onSubmit={handleCreatePrompt}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    padding: "10px",
-                    borderRadius: "12px",
-                    background: "var(--surface-canvas)",
-                    border: "1px solid var(--border-strong)"
+            <button
+              type="button"
+              className="btn-primary btn-sm"
+              onClick={() => setShowAddForm((prev) => !prev)}
+            >
+              {showAddForm ? "Cancel" : "+ New"}
+            </button>
+          </div>
+
+          {showAddForm && (
+            <form className="sim-add-form" onSubmit={handleAddNewPrompt}>
+              <input
+                type="text"
+                placeholder="Template Title"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                required
+              />
+              <textarea
+                placeholder="Prompt text with {{variables}}..."
+                rows={3}
+                value={newText}
+                onChange={(e) => setNewText(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Tags (comma separated, e.g. dev, notes)"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="btn-primary btn-sm"
+                style={{ width: "100%", justifyContent: "center" }}
+              >
+                Save to IndexedDB
+              </button>
+            </form>
+          )}
+
+          <div className="sim-popup-controls">
+            <input
+              type="text"
+              className="popover-search"
+              placeholder="Search library..."
+              value={popupQuery}
+              onChange={(e) => setPopupQuery(e.target.value)}
+            />
+            <select
+              className="sim-sort-select"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value as SortOption)}
+              aria-label="Sort templates"
+            >
+              <option value="created-desc">Newest first</option>
+              <option value="created-asc">Oldest first</option>
+              <option value="title-asc">Title (A-Z)</option>
+              <option value="title-desc">Title (Z-A)</option>
+            </select>
+          </div>
+
+          <div
+            className="popover-tags-bar"
+            style={{
+              borderRadius: 0,
+              borderTop: "1px solid var(--border-subtle)"
+            }}
+          >
+            <nav
+              className="popover-tags"
+              aria-label="Filter popup library by tag"
+              onWheel={(e) => {
+                if (e.deltaY !== 0) {
+                  e.currentTarget.scrollLeft += e.deltaY;
+                }
+              }}
+            >
+              {availableTags.map((t) => {
+                const isSelected = popupTag === t;
+                return (
+                  <button
+                    type="button"
+                    key={t}
+                    className={`tag-pill ${isSelected ? "active" : ""}`}
+                    aria-pressed={isSelected}
+                    onClick={() => {
+                      const nextTag = isSelected && t !== "all" ? "all" : t;
+                      setPopupTag(nextTag);
+                    }}
+                  >
+                    {t === "all" ? "All" : `#${t}`}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          <ul className="sim-popup-list">
+            {popupList.length === 0 ? (
+              <li
+                className="popover-empty"
+                style={{ padding: "28px 14px", textAlign: "center" }}
+              >
+                <span>No templates match your filters</span>
+                <button
+                  type="button"
+                  className="chip-action"
+                  style={{ marginTop: 8 }}
+                  onClick={() => {
+                    setPopupTag("all");
+                    setPopupQuery("");
                   }}
                 >
-                  <input
-                    type="text"
-                    id="new-prompt-title"
-                    className="popover-search"
-                    style={{ paddingLeft: "10px" }}
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder={
-                      isEn ? "Prompt title..." : "Назва шаблону..."
-                    }
-                    required
-                  />
-                  <textarea
-                    id="new-prompt-text"
-                    rows={2}
-                    value={newText}
-                    onChange={(e) => setNewText(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "8px 10px",
-                      borderRadius: "10px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--surface-interactive)",
-                      fontSize: "0.78rem",
-                      resize: "vertical"
-                    }}
-                    placeholder={
-                      isEn
-                        ? "Template text with {{variable}}..."
-                        : "Текст із {{змінною}}..."
-                    }
-                    required
-                  />
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <input
-                      type="text"
-                      id="new-prompt-tag"
-                      className="popover-search"
-                      style={{ paddingLeft: "10px", flex: 1 }}
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      placeholder={
-                        isEn ? "Tag (e.g. dev)" : "Тег (напр. dev)"
-                      }
-                    />
-                    <button type="submit" className="popup-use-btn">
-                      {isEn ? "Create" : "Зберегти"}
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              <div className="popup-sim-toolbar">
-                <input
-                  type="text"
-                  id="popup-sim-search"
-                  className="popover-search"
-                  style={{ paddingLeft: "12px", flex: 1 }}
-                  value={popupQuery}
-                  onChange={(e) => setPopupQuery(e.target.value)}
-                  placeholder={
-                    isEn
-                      ? "Filter by title or tag..."
-                      : "Фільтр за назвою або тегом..."
-                  }
-                  aria-label="Filter popup prompts"
-                />
-                <select
-                  id="popup-sim-sort"
-                  className="popup-sim-select"
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  aria-label="Sort prompts"
-                >
-                  <option value="created-desc">Newest first</option>
-                  <option value="created-asc">Oldest first</option>
-                  <option value="title-asc">A → Z</option>
-                  <option value="title-desc">Z → A</option>
-                  <option value="updated-desc">Recently updated</option>
-                </select>
-              </div>
-
-              <div id="popup-sim-list" className="popup-card-list">
-                {popupItems.map((item) => (
-                  <div key={item.id} className="popup-card-item">
-                    <div className="popover-item-left">
+                  Reset filters
+                </button>
+              </li>
+            ) : (
+              popupList.map((item) => (
+                <li key={item.id} className="sim-popup-card">
+                  <div className="sim-popup-card-header">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px"
+                      }}
+                    >
                       <span
                         className="prompt-icon-box"
                         data-color={item.color}
+                        style={{ width: "22px", height: "22px" }}
                       >
                         <PromptIcon icon={item.icon} />
                       </span>
-                      <div style={{ minWidth: 0 }}>
-                        <div className="popover-item-title">
-                          {item.displayTitle}
-                        </div>
-                        <div
-                          className="popover-item-preview"
-                          style={{ maxWidth: "210px" }}
-                        >
-                          {item.displayText.replace(/\n+/g, " ")}
-                        </div>
-                      </div>
+                      <strong>{item.title}</strong>
                     </div>
                     <button
                       type="button"
-                      className="popup-use-btn"
+                      className="chip-action"
+                      style={{ padding: "3px 8px", fontSize: "0.72rem" }}
                       onClick={() => {
+                        insertTemplateIntoEditor(item.text, true);
                         setSandboxMode("overlay");
-                        insertTemplateIntoGemini(item.displayText, true);
+                        showKeyFeedback("Inserted");
                       }}
                     >
-                      {isEn ? "Insert in Gemini" : "Вставити в Gemini"}
+                      Insert ↗
                     </button>
                   </div>
-                ))}
-              </div>
+                  <p className="sim-popup-card-text">{item.text}</p>
+                  <div className="sim-popup-card-tags">
+                    {item.tags.map((t) => (
+                      <span
+                        key={t}
+                        className={`mini-tag ${popupTag === t ? "active" : ""}`}
+                        onClick={() => {
+                          const nextTag = popupTag === t ? "all" : t;
+                          setPopupTag(nextTag);
+                        }}
+                        title={`Filter by #${t}`}
+                      >
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
 
-              <div
-                id="easter-egg-trigger"
-                className="easter-egg-box"
-                role="button"
-                tabIndex={0}
-                onClick={handleEasterEggClick}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleEasterEggClick();
-                  }
-                }}
-              >
-                <span>
-                  {isEn
-                    ? "Settings Easter egg: click here 5 times"
-                    : "Пасхалка з Settings: клікніть 5 разів сюди"}
-                </span>
-                <span id="easter-egg-status" className="mono">
-                  {easterEggRevealed ? (
-                    <span
-                      style={{
-                        color: "var(--icon-green-fg)",
-                        fontWeight: 700
-                      }}
-                    >
-                      ● Local Storage Synced (chrome.storage.local)
-                    </span>
-                  ) : (
-                    `${easterEggClicks}/5`
-                  )}
-                </span>
-              </div>
+          {easterEggRevealed && (
+            <div className="easter-egg-banner">
+              ✦ Backend API: <code>http://localhost:4300</code> · IndexedDB
+              Active · 2-Way Sync Engine Ready
             </div>
-          </div>
+          )}
         </div>
       </div>
+
+      {/* Floating Keypress Feedback Toast */}
+      {activeKeyBadge && (
+        <div className="floating-key-badge" aria-hidden="true">
+          {activeKeyBadge}
+        </div>
+      )}
     </div>
   );
-};
+});

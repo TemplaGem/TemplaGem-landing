@@ -4,4 +4,5 @@ dist/
 .idea/
 .vscode/
 *.log
+repomix-output.xml
 .superpowers/

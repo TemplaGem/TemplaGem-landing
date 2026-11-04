@@ -1,184 +1,245 @@
 import React from "react";
-import type { Language } from "../types";
 
-interface CapabilitiesSectionProps {
-  lang: Language;
-}
-
-export const CapabilitiesSection: React.FC<CapabilitiesSectionProps> = ({
-  lang
-}) => {
-  const isEn = lang === "en";
-
+export const CapabilitiesSection: React.FC = () => {
   return (
     <section className="page-section" id="capabilities">
       <div className="container">
         <div className="section-header">
           <h2 className="section-title">
-            {isEn
-              ? "Superpowers designed for your daily Gemini workflow"
-              : "Суперсили для щоденної продуктивної роботи в Gemini"}
+            Engineered for high-frequency prompt workflows
           </h2>
           <p className="section-subtitle">
-            {isEn
-              ? "Speed, complete privacy, and fluid keyboard control engineered directly into Google Gemini."
-              : "Миттєвий відгук, абсолютна локальна приватність та бездоганний контроль з клавіатури."}
+            Sub-millisecond speed, private-by-default architecture, and fluid
+            keyboard control tailored for daily AI productivity.
           </p>
         </div>
 
         <div className="bento-grid">
-          {/* Card 1: 0ms Latency & Keyboard Flow */}
+          {/* Card 1: 0ms Latency & Keyboard Flow (Span 7) */}
           <div className="bento-card bento-span-7">
-            <div>
+            <div className="bento-card-header">
               <div className="bento-card-badge">
                 <span>⚡️</span>
-                <span>{isEn ? "0ms Latency" : "0ms затримки"}</span>
+                <span>0ms Latency</span>
               </div>
               <h3 className="bento-title">
-                {isEn
-                  ? "Instant search & fluid Tab-jumping between variables"
-                  : "Миттєвий пошук та плавний перехід між змінними"}
+                Instant search &amp; fluid Tab-jumping between variables
               </h3>
               <p className="bento-text">
-                {isEn
-                  ? "Local memory caching delivers immediate results as you type. Double-brace tokens become interactive glass pills that you can replace and navigate with Tab in a single flow."
-                  : "Локальний кеш у пам'яті браузера забезпечує миттєвий пошук без затримок мережі. Змінні у фігурних дужках стають живими токенами, якими ви керуєте клавішею Tab без миші."}
+                Local in-memory caching delivers immediate results as you type.
+                Double-brace tokens turn into interactive glass pills that you
+                can replace and navigate with Tab without lifting your fingers
+                from the keyboard.
               </p>
             </div>
 
-            <div className="step-code-preview" style={{ borderRadius: "14px", display: "flex", alignItems: "center", gap: "10px" }}>
-              <span className="mono" style={{ color: "var(--accent-blue)", fontWeight: 600 }}>Tab ⇥</span>
-              <span>
-                {isEn ? "Focus next variable instantly:" : "Миттєвий фокус наступної змінної:"}{" "}
-                <span className="ph-template-variable ph-template-variable-active">
-                  {"{{тема}}"}
+            <div className="var-flow-box">
+              <div className="var-flow-preview">
+                <span className="var-flow-prompt-text">
+                  Explain{" "}
+                  <span className="ph-template-variable ph-template-variable-active">
+                    {"{{concept}}"}
+                  </span>{" "}
+                  for level{" "}
+                  <span className="ph-template-variable">
+                    {"{{level}}"}
+                  </span>{" "}
+                  with{" "}
+                  <span className="ph-template-variable">
+                    {"{{count}}"}
+                  </span>{" "}
+                  real-world examples.
                 </span>
-              </span>
+              </div>
+              <div className="var-flow-actions">
+                <div className="var-flow-action-pill">
+                  <kbd className="mono">Tab ⇥</kbd>
+                  <span>Next variable</span>
+                </div>
+                <div className="var-flow-action-pill">
+                  <kbd className="mono">Shift + Tab</kbd>
+                  <span>Previous</span>
+                </div>
+                <div className="var-flow-action-pill">
+                  <kbd className="mono">Enter ⏎</kbd>
+                  <span>Strip brackets &amp; submit</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Card 2: 100% Local-First & Privacy */}
+          {/* Card 2: Offline-First & Privacy (Span 5) */}
           <div className="bento-card bento-span-5">
-            <div>
+            <div className="bento-card-header">
               <div className="bento-card-badge">
                 <span>🔒</span>
-                <span>{isEn ? "Private by Design" : "100% приватність"}</span>
+                <span>Private &amp; Offline-First</span>
               </div>
               <h3 className="bento-title">
-                {isEn
-                  ? "Local-first storage: your prompts stay on your device"
-                  : "Локальне сховище: промпти залишаються лише у вас"}
+                Offline IndexedDB speed with optional cloud sync
               </h3>
               <p className="bento-text">
-                {isEn
-                  ? "Your personal templates and keys reside securely inside chrome.storage.local. Zero tracking, zero telemetry, and Trusted Types compliance."
-                  : "Усі ваші шаблони та змінні зберігаються безпосередньо в локальній базі chrome.storage.local вашого браузера. Жодного збору даних чи витоку інформації."}
+                Your personal templates reside securely inside browser IndexedDB.
+                100% offline functionality with zero telemetry, plus automatic
+                cloud backup &amp; multi-device sync when connected.
               </p>
             </div>
 
-            <div className="step-code-preview mono" style={{ borderRadius: "14px", fontSize: "0.76rem" }}>
-              chrome.storage.local · Zero Telemetry · Trusted Types
+            <div className="storage-metrics-box">
+              <div className="storage-metrics-grid">
+                <div className="storage-metric-cell">
+                  <div className="storage-metric-number mono">0ms</div>
+                  <div className="storage-metric-desc">Local Latency</div>
+                </div>
+                <div className="storage-metric-cell">
+                  <div className="storage-metric-number mono">100%</div>
+                  <div className="storage-metric-desc">Offline First</div>
+                </div>
+                <div className="storage-metric-cell">
+                  <div className="storage-metric-number mono">0 B</div>
+                  <div className="storage-metric-desc">Telemetry</div>
+                </div>
+              </div>
+
+              <div className="storage-flow-status mono">
+                <span>IndexedDB Cache</span>
+                <span className="storage-flow-sep">⇄</span>
+                <span>Mutation Queue</span>
+                <span className="storage-flow-sep">⇄</span>
+                <span>Cloud API</span>
+              </div>
             </div>
           </div>
 
-          {/* Card 3: 40+ Curated Icons & Categories */}
+          {/* Card 3: Curated Icons, Categories & Sort (Span 6) */}
           <div className="bento-card bento-span-6">
-            <div>
+            <div className="bento-card-header">
               <div className="bento-card-badge">
                 <span>✦</span>
-                <span>{isEn ? "Smart Organization" : "Зручна організація"}</span>
+                <span>Smart Organization</span>
               </div>
               <h3 className="bento-title">
-                {isEn
-                  ? "40+ curated icons across 5 categories and 6 sort modes"
-                  : "40+ тематичних іконок у 5 категоріях та гнучке сортування"}
+                Curated icons across 5 categories and 5 sort modes
               </h3>
               <p className="bento-text">
-                {isEn
-                  ? "Assign color-coded Lucide icons across AI & Tech, Writing, Productivity, and Dev. Filter templates by custom #tags with a single click."
-                  : "Призначайте шаблонам власні кольорові іконки (AI, Dev, Writing, Productivity) та миттєво фільтруйте бібліотеку за тегами."}
+                Assign color-coded icons across AI &amp; Tech, Writing,
+                Productivity, and Development. Filter your entire library by
+                custom #tags with a single click.
               </p>
             </div>
 
-            <div className="icon-showcase-grid">
-              <span className="icon-pill-demo">
-                <span
-                  className="prompt-icon-box"
-                  data-color="blue"
-                  style={{ width: "26px", height: "26px" }}
-                >
-                  ✦
-                </span>
-                <span>AI &amp; Tech</span>
-              </span>
-              <span className="icon-pill-demo">
-                <span
-                  className="prompt-icon-box"
-                  data-color="purple"
-                  style={{ width: "26px", height: "26px" }}
-                >
-                  &lt;/&gt;
-                </span>
-                <span>Code · Dev</span>
-              </span>
-              <span className="icon-pill-demo">
-                <span
-                  className="prompt-icon-box"
-                  data-color="green"
-                  style={{ width: "26px", height: "26px" }}
-                >
-                  ✎
-                </span>
-                <span>Writing</span>
-              </span>
-              <span className="icon-pill-demo">
-                <span
-                  className="prompt-icon-box"
-                  data-color="amber"
-                  style={{ width: "26px", height: "26px" }}
-                >
-                  ⚡
-                </span>
-                <span>Productivity</span>
-              </span>
+            <div className="org-showcase-box">
+              {/* Category Pills Header */}
+              <div className="org-category-pills">
+                <span className="org-cat-chip active">All</span>
+                <span className="org-cat-chip">AI &amp; Tech</span>
+                <span className="org-cat-chip">Code · Dev</span>
+                <span className="org-cat-chip">Writing</span>
+                <span className="org-cat-chip">Productivity</span>
+              </div>
+
+              {/* Curated Icons Palette Matrix */}
+              <div className="org-icons-matrix">
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="blue">✦</span>
+                  <span className="org-icon-name">Sparkles</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="purple">&lt;/&gt;</span>
+                  <span className="org-icon-name">Code</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="green">✎</span>
+                  <span className="org-icon-name">Writing</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="amber">⚡</span>
+                  <span className="org-icon-name">Zap</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="blue">🤖</span>
+                  <span className="org-icon-name">AI Bot</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="purple">🧠</span>
+                  <span className="org-icon-name">Logic</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="green">📖</span>
+                  <span className="org-icon-name">Notes</span>
+                </div>
+                <div className="org-icon-badge">
+                  <span className="prompt-icon-box" data-color="amber">⏱</span>
+                  <span className="org-icon-name">Timer</span>
+                </div>
+              </div>
+
+              {/* Sort Modes & Quick Tags Footer */}
+              <div className="org-sort-tags-footer">
+                <div className="org-sort-pill">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                  >
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="4" y1="12" x2="14" y2="12" />
+                    <line x1="4" y1="18" x2="8" y2="18" />
+                  </svg>
+                  <span>Sort: Newest first ▾ (5 modes)</span>
+                </div>
+                <div className="org-quick-tags">
+                  <span className="mini-tag">#coding</span>
+                  <span className="mini-tag">#study</span>
+                  <span className="mini-tag">#work</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Card 4: Engineering Specs */}
+          {/* Card 4: Architecture Specs (Span 6) */}
           <div className="bento-card bento-span-6">
-            <div>
+            <div className="bento-card-header">
               <div className="bento-card-badge">
                 <span>⚙️</span>
-                <span>{isEn ? "Open Source Architecture" : "Архітектура та відкритий код"}</span>
+                <span>Hermetic Architecture</span>
               </div>
               <h3 className="bento-title">
-                {isEn
-                  ? "Engineered with Plasmo MV3 & Trusted Types"
-                  : "Створено на базі Plasmo MV3 та Trusted Types"}
+                Multi-Platform Plasmo MV3 &amp; Discovery Engine
               </h3>
               <p className="bento-text">
-                {isEn
-                  ? "Hermetically isolated Shadow DOM overlays with safe Light DOM injection into Gemini's editor."
-                  : "Герметично ізольований інтерфейс у Shadow DOM та безпечне інтегрування в полі вводу Gemini."}
+                Hermetically isolated Shadow DOM overlays with safe Light DOM
+                injection across Gemini, ChatGPT, Claude, and DeepSeek.
               </p>
             </div>
 
             <ul className="spec-list">
               <li className="spec-item">
-                <div className="spec-item-label">Extension UI &amp; CSUI</div>
-                <div className="spec-item-value">Plasmo MV3 · React 18 · SCSS</div>
+                <div className="spec-item-label">AI Platform Adapters</div>
+                <div className="spec-item-value">
+                  Gemini · ChatGPT · Claude · DeepSeek
+                </div>
               </li>
               <li className="spec-item">
-                <div className="spec-item-label">State &amp; Validation</div>
-                <div className="spec-item-value">TanStack Query v5 · Zod v4</div>
+                <div className="spec-item-label">Discovery &amp; Manifest</div>
+                <div className="spec-item-value">
+                  Heuristic DOM Engine · Dynamic TTL Manifest
+                </div>
               </li>
               <li className="spec-item">
-                <div className="spec-item-label">Quality Assurance</div>
-                <div className="spec-item-value">Vitest (&gt;85% cov) · Playwright</div>
+                <div className="spec-item-label">Storage &amp; Sync</div>
+                <div className="spec-item-value">
+                  IndexedDB · TanStack Query v5 · Express + Mongo
+                </div>
               </li>
               <li className="spec-item">
-                <div className="spec-item-label">License</div>
-                <div className="spec-item-value">MIT · Open Source on GitHub</div>
+                <div className="spec-item-label">Security &amp; Sandboxing</div>
+                <div className="spec-item-value">
+                  Hermetic Shadow DOM · Trusted Types API
+                </div>
               </li>
             </ul>
           </div>

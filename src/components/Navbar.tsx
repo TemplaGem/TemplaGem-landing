@@ -1,30 +1,59 @@
 import React, { useState } from "react";
-import type { Language, ThemeMode } from "../types";
+import type { ThemeMode } from "../types";
 import { TemplaGemMark } from "./Icons";
+import type { LegalTab } from "./LegalPage";
 
 interface NavbarProps {
-  lang: Language;
   theme: ThemeMode;
-  onToggleLang: () => void;
   onToggleTheme: () => void;
+  isLegalView?: boolean;
+  onNavigateHome?: (sectionHash?: string) => void;
+  onOpenLegal?: (tab?: LegalTab) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  lang,
   theme,
-  onToggleLang,
-  onToggleTheme
+  onToggleTheme,
+  isLegalView = false,
+  onNavigateHome,
+  onOpenLegal
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isEn = lang === "en";
 
   const closeMobile = () => setMobileMenuOpen(false);
+
+  const handleSectionClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    sectionHash: string
+  ) => {
+    if (isLegalView && onNavigateHome) {
+      e.preventDefault();
+      onNavigateHome(sectionHash);
+    }
+    closeMobile();
+  };
+
+  const handleLegalClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    tab: LegalTab = "all"
+  ) => {
+    if (onOpenLegal) {
+      e.preventDefault();
+      onOpenLegal(tab);
+    }
+    closeMobile();
+  };
 
   return (
     <>
       <header className="site-header">
         <div className="nav-inner">
-          <a href="#" className="brand-link" aria-label="TemplaGem Home">
+          <a
+            href="#"
+            className="brand-link"
+            aria-label="TemplaGem Home"
+            onClick={(e) => handleSectionClick(e, "#")}
+          >
             <span className="brand-mark" aria-hidden="true">
               <TemplaGemMark size={22} />
             </span>
@@ -35,57 +64,58 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav aria-label="Primary navigation">
             <ul className="nav-links">
               <li>
-                <a href="#interactive-demo">
-                  {isEn ? "Interactive demo" : "Інтерактивне демо"}
+                <a
+                  href="#interactive-demo"
+                  onClick={(e) => handleSectionClick(e, "#interactive-demo")}
+                >
+                  Demo
                 </a>
               </li>
               <li>
-                <a href="#how-it-works">
-                  {isEn ? "How it works" : "Як це працює"}
+                <a
+                  href="#platforms"
+                  onClick={(e) => handleSectionClick(e, "#platforms")}
+                >
+                  Platforms
                 </a>
               </li>
               <li>
-                <a href="#capabilities">
-                  {isEn ? "Capabilities" : "Можливості"}
+                <a
+                  href="#how-it-works"
+                  onClick={(e) => handleSectionClick(e, "#how-it-works")}
+                >
+                  How It Works
                 </a>
               </li>
               <li>
-                <a href="#install">
-                  {isEn ? "Installation" : "Встановлення"}
+                <a
+                  href="#capabilities"
+                  onClick={(e) => handleSectionClick(e, "#capabilities")}
+                >
+                  Capabilities
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#install"
+                  onClick={(e) => handleSectionClick(e, "#install")}
+                >
+                  Installation
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#privacy"
+                  className={isLegalView ? "nav-link-active" : ""}
+                  onClick={(e) => handleLegalClick(e, "all")}
+                >
+                  Privacy &amp; Terms
                 </a>
               </li>
             </ul>
           </nav>
 
           <div className="nav-controls">
-            {/* Apple Segmented Language Switch */}
-            <div
-              className="segmented-lang-control"
-              role="group"
-              aria-label="Language selection"
-            >
-              <button
-                type="button"
-                className={`segmented-btn ${lang === "uk" ? "active" : ""}`}
-                onClick={() => {
-                  if (lang !== "uk") onToggleLang();
-                }}
-                aria-pressed={lang === "uk"}
-              >
-                UA
-              </button>
-              <button
-                type="button"
-                className={`segmented-btn ${lang === "en" ? "active" : ""}`}
-                onClick={() => {
-                  if (lang !== "en") onToggleLang();
-                }}
-                aria-pressed={lang === "en"}
-              >
-                EN
-              </button>
-            </div>
-
             {/* Theme Toggle */}
             <button
               type="button"
@@ -110,6 +140,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </button>
 
+            {/* Install CTA in Nav */}
+            <a
+              href="#install"
+              className="btn-primary btn-sm nav-install-btn"
+              onClick={(e) => handleSectionClick(e, "#install")}
+            >
+              Install Free
+            </a>
+
             {/* Mobile Hamburger Toggle Button */}
             <button
               type="button"
@@ -119,29 +158,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setMobileMenuOpen((prev) => !prev)}
             >
               {mobileMenuOpen ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                >
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                >
                   <line x1="4" y1="7" x2="20" y2="7" />
                   <line x1="4" y1="12" x2="20" y2="12" />
                   <line x1="4" y1="17" x2="20" y2="17" />
                 </svg>
               )}
             </button>
-
-            {/* Desktop Direct Download CTA */}
-            <a
-              href="https://github.com/TemplaGem/TemplaGem/releases"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary btn-sm"
-              style={{ display: "none" }}
-            >
-              {isEn ? "Download .zip" : "Завантажити .zip"}
-            </a>
           </div>
         </div>
       </header>
@@ -151,39 +193,79 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="mobile-nav-drawer" role="dialog" aria-modal="true">
           <ul className="mobile-nav-links">
             <li>
-              <a href="#interactive-demo" className="mobile-nav-link" onClick={closeMobile}>
-                <span>{isEn ? "Interactive demo" : "Інтерактивне демо"}</span>
-                <span style={{ opacity: 0.6 }}>›</span>
-              </a>
-            </li>
-            <li>
-              <a href="#how-it-works" className="mobile-nav-link" onClick={closeMobile}>
-                <span>{isEn ? "How it works" : "Як це працює"}</span>
-                <span style={{ opacity: 0.6 }}>›</span>
-              </a>
-            </li>
-            <li>
-              <a href="#capabilities" className="mobile-nav-link" onClick={closeMobile}>
-                <span>{isEn ? "Capabilities" : "Можливості"}</span>
-                <span style={{ opacity: 0.6 }}>›</span>
-              </a>
-            </li>
-            <li>
-              <a href="#install" className="mobile-nav-link" onClick={closeMobile}>
-                <span>{isEn ? "Installation" : "Встановлення"}</span>
-                <span style={{ opacity: 0.6 }}>›</span>
-              </a>
-            </li>
-            <li style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "8px", marginTop: "4px" }}>
               <a
-                href="https://github.com/TemplaGem/TemplaGem/releases"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#interactive-demo"
+                className="mobile-nav-link"
+                onClick={(e) => handleSectionClick(e, "#interactive-demo")}
+              >
+                <span>Interactive Demo</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#platforms"
+                className="mobile-nav-link"
+                onClick={(e) => handleSectionClick(e, "#platforms")}
+              >
+                <span>Supported Platforms</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#how-it-works"
+                className="mobile-nav-link"
+                onClick={(e) => handleSectionClick(e, "#how-it-works")}
+              >
+                <span>How It Works</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#capabilities"
+                className="mobile-nav-link"
+                onClick={(e) => handleSectionClick(e, "#capabilities")}
+              >
+                <span>Capabilities</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#install"
+                className="mobile-nav-link"
+                onClick={(e) => handleSectionClick(e, "#install")}
+              >
+                <span>Installation</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#privacy"
+                className="mobile-nav-link"
+                onClick={(e) => handleLegalClick(e, "all")}
+              >
+                <span>Privacy Policy &amp; Terms</span>
+                <span style={{ opacity: 0.6 }}>›</span>
+              </a>
+            </li>
+            <li
+              style={{
+                borderTop: "1px solid var(--border-subtle)",
+                paddingTop: "12px",
+                marginTop: "6px"
+              }}
+            >
+              <a
+                href="#install"
                 className="btn-primary"
                 style={{ width: "100%", justifyContent: "center" }}
-                onClick={closeMobile}
+                onClick={(e) => handleSectionClick(e, "#install")}
               >
-                {isEn ? "Download .zip Release" : "Завантажити .zip реліз"}
+                Install for Chrome
               </a>
             </li>
           </ul>
