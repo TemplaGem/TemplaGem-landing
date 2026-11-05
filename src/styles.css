@@ -2242,6 +2242,27 @@ kbd {
   .bento-text {
     font-size: 0.88rem;
   }
+  .org-icons-matrix {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .org-icon-badge {
+    padding: 5px 6px;
+    font-size: 0.7rem;
+  }
+  .storage-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .storage-metric-cell {
+    padding: 8px 4px;
+  }
+  .storage-metric-number {
+    font-size: 0.95rem;
+  }
+  .storage-metric-desc {
+    font-size: 0.65rem;
+  }
   .icon-showcase-grid {
     gap: 6px;
   }
@@ -2643,24 +2664,224 @@ kbd {
   }
 }
 
-@media (max-width: 420px) {
-  .macos-titlebar .macos-url-pill {
-    display: none;
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+  .site-header {
+    top: 4px;
+    padding: 0 4px;
+  }
+  .nav-inner {
+    height: 48px;
+    padding: 0 8px;
+  }
+  .brand-link span {
+    font-size: 0.9rem;
+  }
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+  }
+  .control-pill {
+    padding: 0 6px;
+    font-size: 0.72rem;
+  }
+  .hero-section {
+    padding: 12px 0 28px;
   }
   .hero-title {
-    font-size: 1.75rem;
+    font-size: 1.65rem;
+    letter-spacing: -0.02em;
   }
-  .gemini-Readout-actions {
+  .hero-description {
+    font-size: 0.88rem;
+  }
+  .hero-platforms-list {
+    gap: 6px;
+  }
+  .hero-platform-tag {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+  .macos-window-frame {
+    border-radius: 14px;
+  }
+  .macos-titlebar {
+    padding: 6px 8px;
+  }
+  .macos-url-pill {
+    display: none;
+  }
+  .macos-status-pill {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+  }
+  .sandbox-topbar {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .sim-platform-selector {
     width: 100%;
+    display: flex;
     justify-content: space-between;
+    padding: 2px;
+  }
+  .sim-platform-btn {
+    padding: 4px 6px;
+    font-size: 0.68rem;
+    gap: 4px;
+  }
+  .sandbox-body {
+    padding: 8px;
+  }
+  .gemini-popover-sim {
+    border-radius: 14px;
+  }
+  .popover-header {
+    padding: 6px 8px;
+  }
+  .popover-tags {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .tag-chip {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+  .popover-item {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .popover-item-title {
+    font-size: 0.78rem;
+  }
+  .popover-item-preview {
+    max-width: 130px;
+    font-size: 0.72rem;
+  }
+  .gemini-input-card {
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+  .gemini-editor {
+    min-height: 48px;
+    font-size: 0.82rem;
   }
   .gemini-input-Readout {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
   }
+  .gemini-Readout-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .chip-action {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 0.7rem;
+  }
   .gemini-send-btn {
     align-self: flex-end;
+    width: 30px;
+    height: 30px;
+  }
+  .sim-shortcut-toolbar {
+    padding: 6px 8px;
+  }
+  .sim-shortcut-badge {
+    font-size: 0.65rem;
+    padding: 2px 5px;
+  }
+  .page-section {
+    padding: 32px 0;
+  }
+  .section-title {
+    font-size: 1.35rem;
+  }
+  .section-subtitle {
+    font-size: 0.84rem;
+  }
+  .pipeline-step {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .bento-card {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+  .bento-title {
+    font-size: 1.05rem;
+  }
+  .bento-text {
+    font-size: 0.82rem;
+  }
+  .storage-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .storage-metric-cell {
+    padding: 6px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .storage-metric-desc {
+    text-align: left;
+  }
+  .storage-flow-status {
+    font-size: 0.68rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .org-icons-matrix {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .org-sort-tags-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .var-flow-preview {
+    padding: 10px;
+    font-size: 0.78rem;
+  }
+  .var-flow-action-pill {
+    font-size: 0.68rem;
+    padding: 4px 8px;
+  }
+  .install-box {
+    padding: 14px 10px;
+  }
+  .install-card {
+    padding: 12px;
+  }
+  .code-copy-bar {
+    font-size: 0.7rem;
+    padding: 6px 8px;
+  }
+  .copy-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+  .legal-page-section {
+    padding: 16px 0 40px;
+  }
+  .legal-main-title {
+    font-size: 1.45rem;
+  }
+  .legal-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+  .legal-table th,
+  .legal-table td {
+    padding: 8px 10px;
+    font-size: 0.75rem;
   }
 }
 
