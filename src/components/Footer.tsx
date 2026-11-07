@@ -1,6 +1,7 @@
 import React from "react";
 import { TemplaGemMark } from "./Icons";
 import type { LegalTab } from "./LegalPage";
+import { CHROME_STORE_URL } from "../data/constants";
 
 interface FooterProps {
   onNavigateHome?: (sectionHash?: string) => void;
@@ -70,10 +71,11 @@ export const Footer: React.FC<FooterProps> = ({
             Capabilities
           </a>
           <a
-            href="#install"
-            onClick={(e) => handleSection(e, "#install")}
+            href={CHROME_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            Installation
+            Chrome Web Store
           </a>
           <span style={{ color: "var(--border-strong)", userSelect: "none" }}>
             ·

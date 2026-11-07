@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { ThemeMode } from "../types";
 import { TemplaGemMark } from "./Icons";
 import type { LegalTab } from "./LegalPage";
+import { CHROME_STORE_URL } from "../data/constants";
 
 interface NavbarProps {
   theme: ThemeMode;
@@ -142,11 +143,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Install CTA in Nav */}
             <a
-              href="#install"
+              href={CHROME_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary btn-sm nav-install-btn"
-              onClick={(e) => handleSectionClick(e, "#install")}
             >
-              Install Free
+              Add to Chrome
             </a>
 
             {/* Mobile Hamburger Toggle Button */}
@@ -260,12 +262,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
             >
               <a
-                href="#install"
+                href={CHROME_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-primary"
                 style={{ width: "100%", justifyContent: "center" }}
-                onClick={(e) => handleSectionClick(e, "#install")}
               >
-                Install for Chrome
+                Add to Chrome Free
               </a>
             </li>
           </ul>

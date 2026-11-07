@@ -1850,9 +1850,208 @@ kbd {
 }
 
 /* ==========================================================================
-   Installation Section
+   Installation Section (Chrome Web Store Showcase)
    ========================================================================== */
 
+.install-store-banner {
+  background-color: var(--surface-card);
+  border: var(--specular-border);
+  border-top: var(--specular-top);
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 36px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.install-store-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.install-store-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background-color: var(--icon-green-bg);
+  border: 1px solid rgba(52, 199, 89, 0.3);
+  color: var(--icon-green-fg);
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.install-store-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--icon-green-fg);
+  box-shadow: 0 0 8px var(--icon-green-fg);
+}
+
+.install-store-title {
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.install-store-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.install-store-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+/* Apple-style Chrome Web Store CTA Badge */
+.chrome-store-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%);
+  color: #ffffff !important;
+  text-decoration: none;
+  font-weight: 600;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(10, 132, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+  width: fit-content;
+  transition: transform 0.2s var(--spring-timing), box-shadow 0.2s ease, filter 0.15s ease;
+}
+
+.chrome-store-cta:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(10, 132, 255, 0.45), 0 4px 10px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.05);
+}
+
+.chrome-store-cta:active {
+  transform: scale(0.98);
+}
+
+.chrome-store-cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.chrome-store-cta-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.chrome-store-cta-sub {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.chrome-store-cta-main {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.chrome-store-cta-arrow {
+  margin-left: 6px;
+  transition: transform 0.2s ease;
+}
+
+.chrome-store-cta:hover .chrome-store-cta-arrow {
+  transform: translateX(3px);
+}
+
+.install-store-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.install-meta-pill {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Perks List */
+.install-store-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.install-perk-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: var(--surface-canvas);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.install-perk-card:hover {
+  transform: translateX(3px);
+  border-color: var(--border-strong);
+}
+
+.install-perk-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 3px 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.install-perk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.install-perk-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.install-perk-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Backward compatibility classes (if needed) */
 .install-box {
   background-color: var(--surface-card);
   border: var(--specular-border);
@@ -1860,91 +2059,6 @@ kbd {
   border-radius: 24px;
   padding: 32px;
   box-shadow: var(--shadow-card);
-}
-
-.install-tabs {
-  display: inline-flex;
-  gap: 6px;
-  margin-bottom: 28px;
-  background-color: var(--surface-canvas);
-  padding: 4px;
-  border-radius: 9999px;
-  border: 1px solid var(--border-subtle);
-}
-
-.install-tab {
-  padding: 8px 18px;
-  border-radius: 9999px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.install-tab[aria-selected="true"] {
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
-}
-
-.install-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.install-card {
-  background-color: var(--surface-canvas);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.install-card-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.install-card-text {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.code-copy-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 9px 12px;
-  border-radius: 10px;
-  background-color: var(--surface-interactive);
-  border: 1px solid var(--border-subtle);
-  font-size: 0.8125rem;
-  overflow-x: auto;
-}
-
-.copy-btn {
-  padding: 5px 12px;
-  border-radius: 7px;
-  border: 1px solid var(--border-strong);
-  background-color: var(--surface-elevated);
-  color: var(--text-primary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.copy-btn:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
 }
 
 /* ==========================================================================
@@ -2277,30 +2391,19 @@ kbd {
   .spec-item {
     padding: 10px 12px;
   }
+  .install-store-banner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+  .chrome-store-cta {
+    width: 100%;
+    justify-content: center;
+  }
   .install-box {
     padding: 18px 14px;
     border-radius: 18px;
-  }
-  .install-tabs {
-    flex-direction: column;
-    width: 100%;
-    border-radius: 14px;
-    padding: 3px;
-    gap: 4px;
-    margin-bottom: 20px;
-  }
-  .install-tab {
-    width: 100%;
-    text-align: center;
-    padding: 8px 12px;
-    font-size: 0.8rem;
-  }
-  .install-card {
-    padding: 16px;
-  }
-  .code-copy-bar {
-    font-size: 0.75rem;
-    padding: 8px 10px;
   }
   .site-footer {
     padding: 32px 0;
@@ -2854,19 +2957,25 @@ kbd {
     font-size: 0.68rem;
     padding: 4px 8px;
   }
-  .install-box {
-    padding: 14px 10px;
+  .install-store-banner {
+    padding: 18px 14px;
+    border-radius: 16px;
+    gap: 18px;
   }
-  .install-card {
+  .chrome-store-cta {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .chrome-store-cta-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .chrome-store-cta-main {
+    font-size: 0.95rem;
+  }
+  .install-perk-card {
     padding: 12px;
-  }
-  .code-copy-bar {
-    font-size: 0.7rem;
-    padding: 6px 8px;
-  }
-  .copy-btn {
-    padding: 4px 8px;
-    font-size: 0.7rem;
+    gap: 10px;
   }
   .legal-page-section {
     padding: 16px 0 40px;

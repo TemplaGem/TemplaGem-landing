@@ -16,6 +16,25 @@ export const TemplaGemMark: React.FC<{ size?: number }> = ({ size = 24 }) => (
 );
 
 /**
+ * Official Chrome Web Store / Google Chrome icon
+ */
+export const ChromeWebStoreMark: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.75" />
+    <circle cx="12" cy="12" r="4.25" stroke="currentColor" strokeWidth="1.75" fill="currentColor" fillOpacity="0.15" />
+    <path d="M12 2a10 10 0 0 1 8.66 5H12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    <path d="M20.66 7a10 10 0 0 1-5 13.66L12 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    <path d="M3.34 17a10 10 0 0 1 3.66-15L12 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+  </svg>
+);
+
+/**
  * Official Google Gemini Spark
  */
 export const GeminiMark: React.FC<{ size?: number }> = ({ size = 18 }) => (

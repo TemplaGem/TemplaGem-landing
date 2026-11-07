@@ -1,6 +1,7 @@
 import React from "react";
 import { ChatGPTMark, ClaudeMark, DeepSeekMark, GeminiMark } from "./Icons";
 import { SandboxSimulator } from "./SandboxSimulator";
+import { CHROME_STORE_URL } from "../data/constants";
 
 export const HeroSection: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ export const HeroSection: React.FC = () => {
         <div className="hero-copy">
           <div className="status-pill">
             <span className="status-dot" aria-hidden="true" />
-            <span>Universal AI Extension · Chrome, Brave &amp; Edge</span>
+            <span>Now on Chrome Web Store · MV3 Verified</span>
           </div>
 
           <h1 className="hero-title">
@@ -24,8 +25,13 @@ export const HeroSection: React.FC = () => {
           </p>
 
           <div className="hero-actions">
-            <a href="#install" className="btn-primary apple-cta">
-              <span>Install for Chrome</span>
+            <a
+              href={CHROME_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary apple-cta"
+            >
+              <span>Add to Chrome — It's Free</span>
               <svg
                 className="cta-arrow"
                 width="14"

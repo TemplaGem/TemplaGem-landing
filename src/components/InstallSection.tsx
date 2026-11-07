@@ -1,23 +1,6 @@
-import React, { useState } from "react";
-
-const CopyCommandBar: React.FC<{ command: string }> = ({ command }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard?.writeText(command);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1400);
-  };
-
-  return (
-    <div className="code-copy-bar mono">
-      <span>{command}</span>
-      <button type="button" className="copy-btn" onClick={handleCopy}>
-        {copied ? "Copied" : "Copy"}
-      </button>
-    </div>
-  );
-};
+import React from "react";
+import { ChromeWebStoreMark } from "./Icons";
+import { CHROME_STORE_URL } from "../data/constants";
 
 export const InstallSection: React.FC = () => {
   return (
@@ -26,98 +9,97 @@ export const InstallSection: React.FC = () => {
         <div className="section-header">
           <div className="bento-card-badge" style={{ marginBottom: "14px" }}>
             <span>⚡️</span>
-            <span>Quick Setup</span>
+            <span>Official Release</span>
           </div>
-          <h2 className="section-title">Install in under a minute</h2>
+          <h2 className="section-title">Install directly from Chrome Web Store</h2>
           <p className="section-subtitle">
-            Add TemplaGem to Google Chrome, Brave, Microsoft Edge, Arc, or any
-            Chromium-based browser.
+            TemplaGem is fully verified and available on the Chrome Web Store.
+            One click to install on Google Chrome, Brave, Arc, Microsoft Edge, and any Chromium-based browser.
           </p>
         </div>
 
-        <div className="install-box">
-          <div className="install-steps">
-            <div className="install-card">
-              <div
-                className="step-number"
-                style={{ alignSelf: "flex-start" }}
-              >
-                Step 1
-              </div>
-              <h3 className="install-card-title">
-                Download the package
-              </h3>
-              <p className="install-card-text">
-                Download the pre-packaged <code>templagem-extension.zip</code> and
-                extract it to a folder on your computer.
-              </p>
+        <div className="install-store-banner">
+          <div className="install-store-content">
+            <div className="install-store-badge">
+              <span className="install-store-dot" />
+              <span>Available now · Chrome Web Store</span>
+            </div>
+
+            <h3 className="install-store-title">
+              Ready to supercharge your prompt workflow?
+            </h3>
+            <p className="install-store-desc">
+              Automatic injection into Gemini, ChatGPT, Claude, and DeepSeek.
+              No complex setup, no developer mode or zip archives required.
+            </p>
+
+            <div className="install-store-actions">
               <a
-                href="#download"
-                className="btn-primary btn-sm"
-                style={{ alignSelf: "flex-start", marginTop: "auto" }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Extension package will download. Place your production zip in the distribution path.");
-                }}
+                href={CHROME_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="chrome-store-cta"
               >
+                <div className="chrome-store-cta-icon">
+                  <ChromeWebStoreMark size={22} />
+                </div>
+                <div className="chrome-store-cta-text">
+                  <span className="chrome-store-cta-sub">Available in the</span>
+                  <span className="chrome-store-cta-main">Chrome Web Store</span>
+                </div>
                 <svg
-                  width="13"
-                  height="13"
+                  className="chrome-store-cta-arrow"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                 >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
                 </svg>
-                <span>Download .zip</span>
               </a>
-            </div>
 
-            <div className="install-card">
-              <div
-                className="step-number"
-                style={{ alignSelf: "flex-start" }}
-              >
-                Step 2
-              </div>
-              <h3 className="install-card-title">Enable Developer Mode</h3>
-              <p className="install-card-text">
-                Open your browser extensions manager and turn on Developer mode
-                in the top-right corner.
-              </p>
-              <div style={{ marginTop: "auto" }}>
-                <CopyCommandBar command="chrome://extensions" />
+              <div className="install-store-meta">
+                <span className="install-meta-pill">✓ 1-Click Install</span>
+                <span className="install-meta-pill">✓ Automatic Updates</span>
+                <span className="install-meta-pill">✓ 100% Free &amp; Private</span>
               </div>
             </div>
+          </div>
 
-            <div className="install-card">
-              <div
-                className="step-number"
-                style={{ alignSelf: "flex-start" }}
-              >
-                Step 3
+          <div className="install-store-perks">
+            <div className="install-perk-card">
+              <div className="install-perk-num">01</div>
+              <div className="install-perk-body">
+                <div className="install-perk-title">Instant 1-Click Setup</div>
+                <div className="install-perk-desc">
+                  Click "Add to Chrome" and start using prompt templates in your favorite AI chat immediately.
+                </div>
               </div>
-              <h3 className="install-card-title">Load unpacked</h3>
-              <p className="install-card-text">
-                Click <strong>Load unpacked</strong> and select the extracted
-                folder. Open Gemini, ChatGPT, Claude or DeepSeek and enjoy!
-              </p>
-              <div
-                className="step-code-preview mono"
-                style={{
-                  borderRadius: "10px",
-                  fontSize: "0.75rem",
-                  marginTop: "auto",
-                  padding: "8px 12px",
-                  textAlign: "center"
-                }}
-              >
-                Ready in all AI chats ✓
+            </div>
+
+            <div className="install-perk-card">
+              <div className="install-perk-num">02</div>
+              <div className="install-perk-body">
+                <div className="install-perk-title">Universal Multi-AI Support</div>
+                <div className="install-perk-desc">
+                  Native overlay, interactive variables, and quick insert on Gemini, ChatGPT, Claude, and DeepSeek.
+                </div>
+              </div>
+            </div>
+
+            <div className="install-perk-card">
+              <div className="install-perk-num">03</div>
+              <div className="install-perk-body">
+                <div className="install-perk-title">Offline-First &amp; Cloud Sync</div>
+                <div className="install-perk-desc">
+                  Your prompt library lives in local IndexedDB with optional end-to-end cloud sync across devices.
+                </div>
               </div>
             </div>
           </div>
